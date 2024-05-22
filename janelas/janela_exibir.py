@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import ttk
+from db.database import Database
 
 class ExibirVeiculos(ctk.CTkToplevel):
     def __init__(self, master=None):
@@ -38,7 +39,20 @@ class ExibirVeiculos(ctk.CTkToplevel):
 
         self.style = ttk.Style()
         self.style.theme_use('clam')
-        self.style.configure('Treeview', rawheight=40, font=('Open Sans', 12), foregroubd='white', background="#2b2b2b")
+        self.style.configure('Treeview', rawheight=40, font=('Open Sans', 12), foreground='white', background="#2b2b2b")
         self.style.configure('Treeview.Heading', font=('Open Sans', 12), foreground="White", background='#2b2b2b')
         self.style.map('Treeview', background=[('selected', '#144870')])
         
+        self.exibir_veiculos()
+
+    def exibir_veiculos(self):
+        db = Database('db/locadora.db')
+        db.connect()
+        query = "SELECT * FROM veiculos"
+        cursor = db.connection.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            print(row)
+            self.tabelaCarros.insert('', 'end', text='', values = (row[0], row[2], row[3], row[4]))
+        db.disconect()
